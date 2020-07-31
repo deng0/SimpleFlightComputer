@@ -82,6 +82,12 @@ namespace SimpleFlightComputer
             DVector3 aS = (vd - vc) / tt;
             DVector3 stableThrust = aS * ship.Mass;
 
+            // if pilot wants to stop without spacebreak, use stableThrust for a more predictable flight path
+            if (Helpers.IsZero(vd.Length()))
+            {
+                return (stableThrust, tt, tt);
+            }
+
             // determine the acceleration (ad) the ship would do when starting at standstill and accelerating along the desired velocity vector
             // first determine max available thrust that would be available for that
             DVector3 amd = ship.DetermineMaxAvailableThrust(vd) / ship.Mass;
