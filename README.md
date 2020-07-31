@@ -46,7 +46,7 @@ In theses examples the ship's thrust values and mass are set to those of an Aven
 ![withinspeedlimit](Images/withinspeedlimit.png)
 
 This case is as follows. The ship is traveling sideways with having reached its currently set speed limit. The pilot now determines that he wants to go forward instead.
-Because of the fact that the aft thrusters of the ship are stronger in the "max thrust" mode halfway through the maneuver they will have finished their work and only the side thrusters will still be firing resulting in a change of acceleration direction, but also that the ship will carry a lot more forward speed through for most of the maneuver. 
+Because of the fact that the aft thrusters of the ship are stronger in the "max thrust" mode halfway through the maneuver they will have finished their work and only the side thrusters will still be firing resulting in a change of acceleration direction, but also that the ship will carry a lot more forward speed through most of the maneuver. 
 This will also have the effect that for a part of the maneuver the ship will exceed the speed limit set by the pilot (which can have negative impacts on gimbal performance).
 The two "stable" modes will throttle the aft thrusters to achieve stable acceleration throughout the maneuver. 
 Typically the aft thrusters will overheat faster than side thrusters and because the aft thrusters are not going full power, this should make it possible to use the afterburner for a longer duration in the beginning of the maneuver than would be possible with the "max thrust" mode, which will slightly improve the forward speed but more importantly will make the "stable" modes outperform the "max thrust" mode when it comes to eliminating drift in cases like these.
@@ -83,7 +83,7 @@ The FlightComputer class is the most interesting class which takes a SpaceShip i
 To generate the data how the velocity vector changes and results in a flight path, you can use the PerformManeuver method located in the Tests class.
 
 ## Short mathematical explanation of the "anti-drift stable" coupled mode
-The basic idea behind this mode is to determine whether or not using max thrust instead of stable thrust will bring the velocity vector closer the direction of the desired velocity vector.
+The basic idea behind this mode is to determine whether or not using max thrust instead of stable thrust will bring the velocity vector closer to the direction of the desired velocity vector.
 This can be done for each thrust axis independently.
 A graphical explanation looks like this:
 
@@ -95,5 +95,5 @@ The slope of each of the three lines represent different acceleration values.
 **am** matches the acceleration that will be achieved when full thrust is used.
 **aS** matches the acceleration when stable thrust is used.
 and **ad** matches the acceleration the thruster can achieve when the ship would already be traveling in the direction of the desired velocity vector.
-When the intersection of the **am** and **ad** is between *0* and **tt** then max thrust should be preferred otherwise stable thrust will be used.
+When the intersection of the **am** and **ad** is between **0** and **tt** then max thrust should be preferred otherwise stable thrust will be used.
 For more details and formulas have a look at the DetermineStableAntiDriftThrust method.
