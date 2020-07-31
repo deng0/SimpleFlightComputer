@@ -76,7 +76,7 @@ Same situation as the example above but now the pilot engages spacebrake. In thi
 
 ## Conclusion
 In all cases I can think of the "anti-drift stable" mode described here would be better suited than the simple "stable" mode currently implemented in Star Citizen 3.10.
-Only in some very specific situations the basic "max thrust" mode might provide better results, but that might be mitigated by the fact that in these same situations "anti-drift stable" mode might allow for longer afterburner durations. So I would suggest that CIG updates their coupled mode to something similar to this "anti-drift stable" mode. Then they could still add a toggle to switch between "anti-drift stable" and "max thrust" coupled mode, but I don't think that would necessary.
+Only in some very specific situations the basic "max thrust" mode might provide better results, but that might be mitigated by the fact that in these same situations "anti-drift stable" mode might allow for longer afterburner durations. So I would suggest that CIG updates their coupled mode to something similar to this "anti-drift stable" mode. Then they could still add a toggle to switch between "anti-drift stable" and "max thrust" coupled mode, but I don't think that would be necessary.
 
 ## Source Code
 The FlightComputer class is the most interesting class which takes a SpaceShip instance (containing information about the ship's capabilities, state, pilot's intentions) and computes the thrust values to apply. The different modes are represented by different methods: DetermineMaxThrust, DetermineStableThrust and DetermineStableAntiDriftThrust.
