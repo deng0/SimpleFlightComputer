@@ -18,20 +18,25 @@
 
         public double AfterburnerFactor = 2;
 
-        /// <summary>
-        /// The current position [m].
-        /// </summary>
-        public DVector3 Position;
-
         ///// <summary>
         ///// The current orientation.
         ///// </summary>
-        //public Quaternion Orientation;
+        public Quaternion Orientation { get; private set; } = Quaternion.Identity;
+
+        /// <summary>
+        /// The current position [m].
+        /// </summary>
+        public DVector3 WorldPosition;
 
         /// <summary>
         /// The current speed [m/s].
         /// </summary>
         public double Speed;
+
+        /// <summary>
+        /// The world flight direction.
+        /// </summary>
+        public DVector3 WorldFlightDirection { get; private set; } = new DVector3(0, 0, 1);
 
         /// <summary>
         /// The flight direction (normalized vector) in ship orientation.
@@ -81,31 +86,36 @@
         {
             DVector3 fac = new DVector3(1, 1, 1);
 
-            if (thrust.X > this.MaxThrust.X)
+            double abFac = this.AfterburnerEngaged ? this.AfterburnerFactor : 1;
+
+            DVector3 maxThrust = abFac * this.MaxThrust;
+            DVector3 minThrust = abFac * this.MinThrust;
+
+            if (thrust.X > maxThrust.X)
             {
-                fac.X = this.MaxThrust.X / thrust.X;
+                fac.X = maxThrust.X / thrust.X;
             }
-            else if (thrust.X < this.MinThrust.X)
+            else if (thrust.X < minThrust.X)
             {
-                fac.X = this.MinThrust.X / thrust.X;
+                fac.X = minThrust.X / thrust.X;
             }
 
-            if (thrust.Y > this.MaxThrust.Y)
+            if (thrust.Y > maxThrust.Y)
             {
-                fac.Y = this.MaxThrust.Y / thrust.Y;
+                fac.Y = maxThrust.Y / thrust.Y;
             }
-            else if (thrust.Y < this.MinThrust.Y)
+            else if (thrust.Y < minThrust.Y)
             {
-                fac.Y = this.MinThrust.Y / thrust.Y;
+                fac.Y = minThrust.Y / thrust.Y;
             }
 
-            if (thrust.Z > this.MaxThrust.Z)
+            if (thrust.Z > maxThrust.Z)
             {
-                fac.Z = this.MaxThrust.Z / thrust.Z;
+                fac.Z = maxThrust.Z / thrust.Z;
             }
-            else if (thrust.Z < this.MinThrust.Z)
+            else if (thrust.Z < minThrust.Z)
             {
-                fac.Z = this.MinThrust.Z / thrust.Z;
+                fac.Z = minThrust.Z / thrust.Z;
             }
 
             maxedAxis = -1;
@@ -129,6 +139,20 @@
             return thrust;
         }
 
+        public void SetWorldFlightDirection(DVector3 worldFlightDirection)
+        {
+            this.WorldFlightDirection = worldFlightDirection;
+            this.UpdateOrientation(this.Orientation);
+        }
+
+        public void UpdateOrientation(Quaternion orientation)
+        {
+            this.Orientation = orientation;
+
+            // update flight direction relative to ship orientation
+            this.FlightDirection = this.Orientation.Inverted().Transform(this.WorldFlightDirection);
+        }
+
         /// <summary>
         /// Applies the thrust for the specified amount of time
         /// </summary>
@@ -142,17 +166,32 @@
             // current velocity vector
             DVector3 velocityVector = this.Speed * this.FlightDirection;
 
+            // compute velocity change
+            DVector3 velocityChange = 0.5 * acc * time * time + velocityVector * time;
+
+            // transform to world
+            DVector3 worldVelocityChange = this.Orientation.Transform(velocityChange);
+
             // update current position
-            this.Position += 0.5 * acc * time * time + velocityVector * time;
+            this.WorldPosition += worldVelocityChange;
 
             // update current velocity vector.
             velocityVector += acc * time;
             this.Speed = velocityVector.Normalize();
 
+            // just to make sure spaceship comes to full stop if within small tolerance
+            if (this.Speed < 0.001)
+            {
+                this.Speed = 0.0;
+            }
+
             // just to make sure flight Direction is not set to an invalid direction
-            if (this.Speed > 0)
+            if (this.Speed > 0.0)
             {
                 this.FlightDirection = velocityVector;
+
+                // also update WorldVelocityVector
+                this.WorldFlightDirection = this.Orientation.Transform(this.FlightDirection);
             }
         }
     }

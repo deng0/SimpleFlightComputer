@@ -37,7 +37,7 @@ namespace SimpleFlightComputer
             double timestamp = 0;
 
             // add current velocity and position
-            states.Add((timestamp, ship.Speed * ship.FlightDirection, ship.Position));
+            states.Add((timestamp, ship.Speed * ship.WorldFlightDirection, ship.WorldPosition));
 
             bool finishedSuccessfully = true;
 
@@ -54,7 +54,7 @@ namespace SimpleFlightComputer
                 timestamp += flightComputer.UpdateThrustInterval;
 
                 // add updated velocity and position to lists
-                states.Add((timestamp, ship.Speed * ship.FlightDirection, ship.Position));
+                states.Add((timestamp, ship.Speed * ship.WorldFlightDirection, ship.WorldPosition));
 
                 // just to prevent infinite loop in case of a bug
                 if (states.Count >= MaxStepCount)
