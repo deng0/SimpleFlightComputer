@@ -98,7 +98,7 @@ namespace SimpleFlightComputer
             // if desired speed is 0 and AntiDriftBraking is not enabled use stable thrust
             else if (this.UseAntiDrift && (ship.DesiredSpeed > 0 || this.UseAntiDriftBraking))
             {
-                // use normalized thrust along flight direction (same as the desired flight direction)
+                // use normalized thrust along desired flight direction (same as the desired flight direction)
                 DVector3 thrustAlongDesiredNormalized = ship.DesiredFlightDirection;
 
                 // project vector thrustToDesired to thrustAlongDesiredNormalized 
