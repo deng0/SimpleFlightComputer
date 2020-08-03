@@ -107,5 +107,5 @@ In all cases, I can think of, the "anti-drift stable" mode described here would 
 Only in some very specific situations the basic "max thrust" mode might provide better results, but that might be mitigated by the fact that in these same situations "anti-drift stable" mode might allow for longer afterburner durations. So I would suggest that CIG updates their coupled mode to something similar to this "anti-drift stable" mode. Then they could still add a toggle to switch between "anti-drift stable" and "max thrust" coupled mode, but I don't think that would be necessary.
 
 ## Source Code
-The FlightComputer class is the most interesting class which takes a SpaceShip instance (containing information about the ship's capabilities, state, pilot's intentions) and computes the thrust values to apply. As described above the different modes can be achieved by setting the FlighComputers Properties.
+The FlightComputer class is the most interesting class which takes a SpaceShip instance (containing information about the ship's capabilities, state, pilot's intentions) and computes the thrust values to apply. As described above the different modes can be achieved by setting the FlighComputer's properties.
 To generate the data how the velocity vector changes and results in a flight path, you can use the PerformManeuver method located in the Tests class.
