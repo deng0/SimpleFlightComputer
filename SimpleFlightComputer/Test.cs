@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SimpleFlightComputer
 {
     public static class Test
     {
+        public const double G = 9.80665; // [m/s²]
+
         public static SpaceShip CreateAvenger()
         {
             SpaceShip ship = new SpaceShip();
             ship.Mass = 50040;
-            ship.MaxThrust = new DVector3(3.4, 4.3, 8.4) * Constants.G * ship.Mass;
-            ship.MinThrust = new DVector3(-3.4, -4.3, -4.7) * Constants.G * ship.Mass;
+            ship.MaxThrust = new DVector3(3.4, 4.3, 8.4) * G * ship.Mass;
+            ship.MinThrust = new DVector3(-3.4, -4.3, -4.7) * G * ship.Mass;
             return ship;
         }
 
@@ -23,13 +24,12 @@ namespace SimpleFlightComputer
         /// Performs the maneuver.
         /// </summary>
         /// <param name="ship">The ship.</param>
-        /// <param name="timeStep">The time step in seconds.</param>
-        /// <param name="computeThrustFunc">The compute thrust function.</param>
+        /// <param name="flightComputer">The flight computer.</param>
         /// <param name="states">The states.</param>
+        /// <returns></returns>
         public static bool PerformManeuver(
             SpaceShip ship,
-            double timeStep,
-            Func<SpaceShip, (DVector3 thrust, double nextThrustChange, double remaintingTime)> computeThrustFunc,
+            FlightComputer flightComputer,
             out List<(double timestamp, DVector3 velocity, DVector3 position)> states)
         {
             states = new List<(double timestamp, DVector3 velocity, DVector3 position)>();
@@ -37,29 +37,24 @@ namespace SimpleFlightComputer
             double timestamp = 0;
 
             // add current velocity and position
-            states.Add((timestamp, ship.Velocity, ship.Position));
+            states.Add((timestamp, ship.Speed * ship.FlightDirection, ship.Position));
 
             bool finishedSuccessfully = true;
 
-            while ((ship.DesiredVelocity - ship.Velocity).Length() > 0.1)
+            // simple check whether maneuver is finished
+            while ((ship.DesiredSpeed * ship.DesiredFlightDirection - ship.Speed * ship.FlightDirection).Length() > 0.1)
             {
                 // determine thrust and time remaining to complete maneuver
-                (DVector3 thrust, double nextThrustChange, double remainingTime) = computeThrustFunc(ship);
+                DVector3 thrust = flightComputer.ComputeThrust(ship);
 
-                double thrustTime = timeStep;
+                // apply thrust to ship
+                ship.ApplyThrust(thrust, flightComputer.UpdateThrustInterval);
 
-                // prevent overshooting
-                if (nextThrustChange > 0)
-                {
-                    thrustTime = Math.Min(nextThrustChange, thrustTime);
-                }
-
-                ship.ApplyThrust(thrust, thrustTime);
-
-                timestamp += thrustTime;
+                // update timestamp
+                timestamp += flightComputer.UpdateThrustInterval;
 
                 // add updated velocity and position to lists
-                states.Add((timestamp, ship.Velocity, ship.Position));
+                states.Add((timestamp, ship.Speed * ship.FlightDirection, ship.Position));
 
                 // just to prevent infinite loop in case of a bug
                 if (states.Count >= MaxStepCount)
