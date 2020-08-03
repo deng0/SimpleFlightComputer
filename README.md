@@ -37,7 +37,7 @@ Setting PrioritizeStability to true and UseAntiDrift to false will result in thi
 
 ## "anti-drift stable" coupled mode
 Setting PrioritizeStability and UseAntiDrift to true will improve the thrust output to counter drift. Drift is defined as any motion that is not in the direction of the desired velocity vector. It works for every possible direction of desired velocity vectors, not just when the pilot wants to fly straight forward.
-In the first iteration of the anti-drift mode, the flight computer restricted the use of it's anti-drift behaviour when this would increase the total time needed to achieve the desired velocity vector. This restriction has since been dropped to make the anti-drift behaviour work better in all cases and make it more predictable for the pilot. This has also greatly simplified the algorithm. The increase in total time is negligible.
+In the first iteration of the anti-drift mode, the flight computer only made use of it's anti-drift behaviour when this would not increase the total time needed to achieve the desired velocity vector. This restriction has since been dropped to make the anti-drift behaviour work better in all cases and make it more predictable for the pilot. This has also greatly simplified the algorithm. The increase in total time is negligible.
 
 
 ## Comparison
@@ -81,7 +81,7 @@ This case shows that the "anti-drift stable" does not just work in special cases
 
 ![stable_antidrift2.png](Images/stable_antidrift2.png)
 
-Similar as above, but this shows that the "anti-drift" mode even changes thrust direction along the lateral thrust axis during the maneuver to achive a better flight path.
+Similar as above, but this shows that the "anti-drift" mode even changes thrust direction along the lateral thrust axis during the maneuver to achieve a better flight path.
 
 ![stable.png](Images/stable.png)
 
