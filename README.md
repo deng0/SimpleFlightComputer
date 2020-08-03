@@ -81,7 +81,7 @@ This case shows that the "anti-drift stable" does not just work in special cases
 
 ![stable_antidrift2.png](Images/stable_antidrift2.png)
 
-Similar as above, but this shows that the "anti-drift" mode even changes thrust direction along the longitudinal axis during the maneuver to achive optimal flight path.
+Similar as above, but this shows that the "anti-drift" mode even changes thrust direction along the lateral thrust axis during the maneuver to achive a better flight path.
 
 ![stable.png](Images/stable.png)
 
