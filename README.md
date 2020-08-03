@@ -79,14 +79,27 @@ The improved "anti-drift stable" coupled mode is capable of determining that in 
 
 This case shows that the "anti-drift stable" does not just work in special cases like the one above. Additionally once it has successfully countered the drift it will perfectly align with the desired acceleration direction resulting in a smoother flight path.
 
+![stable_antidrift2.png](Images/stable_antidrift2.png)
+
+Similar as above, but this shows that the "anti-drift" mode even changes thrust direction along the longitudinal axis during the maneuver to achive optimal flight path.
+
 ![stable.png](Images/stable.png)
 
 In this case the ship is currently in standstill and the pilot sets a new desired velocity vector. In "max thrust" mode the ship will accelerate in a direction that does not match the direction of the desired velocity vector resulting in flight path that is not straight. In both "stable" modes the flight path perfectly matches the desired direction.
 This will be perfectly suited when trying to perform precise docking/landing maneuvers.
 
+![brakesteering.png](Images/brakesteering.png)
+
+In this case the pilot wants to slow down, but also adjust flight direction. The anti-drift feature allows the pilot to more effectively steer while slowing down.
+
+![fullstop2.png](Images/fullstop2.png)
+
+In this case the pilot decides that he wants to come to a full stop. When UseAntiDriftBraking is enabled the FlightComputer assumes the pilot prefers slowing down along the longitudinal axis of his ship, so any drift will be eliminated as fast as possible. In this case this results in the same flight path as the "max thrust" mode.
+
 ![fullstop.png](Images/fullstop.png)
 
-In this case the pilot decides that he wants to come to a full stop. Although the "max thrust" mode will ensure that the ship travels the shortest distance before coming to a full stop the flight path will be slightly unpredictable. The "anti-drift stable" mode is configured to use AntiDriftBraking, which allows steering while braking.
+Similar to above but the ship is traveling sidways. Although the "max thrust" mode will ensure that the ship travels the shortest distance before coming to a full stop the flight path will be slightly unpredictable. In this case using "stable thrust" actually results in the least drift relative to the ship's longitudinal axis so whether AntiDriftBraking is enabled or not has no effect.
+
 
 
 ## Conclusion
