@@ -5,26 +5,7 @@ This repository contains code to test different concepts of how a spaceship in S
 In coupled mode the pilot specifies his desired velocity vector (strafe input depending on current ship orientation multiplied by speed limit (maximum ship speed when speed limit is disabled)).
 The IFCS in coupled mode determines how to use your thrusters to achieve the new velocity vector in regards to your current velocity vector.
 In other words the IFCS determines thrust power that each thruster has to perform to achieve the new velocity vector.
-
-This repository contains a FlightComputer that can be configured to achieve different results.
-```
-        /// <summary>
-        /// When this is disabled, simple "max thrust" mode is used.
-        /// </summary>
-        public bool PrioritizeStability = true;
-
-        /// <summary>
-        /// Whether to use anti-drift. This has no effect when PrioritizeStability is disabled.
-        /// </summary>
-        public bool UseAntiDrift = true;
-
-        /// <summary>
-        /// Whether to use anti-drift while braking. This has no effect when PrioritizeStability or UseAntiDrift is disabled.
-        /// </summary>
-        public bool UseAntiDriftBraking = true;
-```
-
-Regardless of the options the flight computer is always subject to the same underlying physics and the same thrust restrictions of the spaceship.
+Regardless of the mode being used the flight computer is always subject to the same underlying physics and the same thrust restrictions of the spaceship.
 
 ## "max thrust" coupled mode
 This mode always uses the maximum thrust power of each thruster resulting in different burn times for each thruster.
@@ -92,14 +73,13 @@ This will be perfectly suited when trying to perform precise docking/landing man
 
 In this case the pilot wants to slow down, but also adjust flight direction. The anti-drift feature allows the pilot to more effectively steer while slowing down.
 
-![fullstop2.png](Images/fullstop2.png)
-
-In this case the pilot decides that he wants to come to a full stop. When UseAntiDriftBraking is enabled the FlightComputer assumes the pilot prefers slowing down along the longitudinal axis of his ship, so any drift will be eliminated as fast as possible. In this case this results in the same flight path as the "max thrust" mode.
-
 ![fullstop.png](Images/fullstop.png)
 
-Similar to above but the ship is traveling sidways. Although the "max thrust" mode will ensure that the ship travels the shortest distance before coming to a full stop the flight path will be slightly unpredictable. In this case using "stable thrust" actually results in the least drift relative to the ship's longitudinal axis so whether AntiDriftBraking is enabled or not has no effect.
+In this case the pilot decides that he wants to come to a full stop. Although the "max thrust" mode will ensure that the ship travels the shortest distance before coming to a full stop the flight path will be slightly unpredictable. Both stable modes will result in a straight flight path. 
 
+![fullstop2.png](Images/fullstop2.png)
+
+This case shows the possibility to use brake steering with the "anti-drift" mode. This is done by specifying a desired flight direction (in this case foward) while at the same time setting the desired speed to 0. In game this could be represented by pressing spacebrake or setting speed limit to 0 while at the same time specifying strafe input.
 
 
 ## Conclusion
