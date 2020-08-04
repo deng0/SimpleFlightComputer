@@ -86,6 +86,30 @@ This case shows the possibility to use brake steering with the "anti-drift" mode
 In all cases, I can think of, the "anti-drift stable" mode described here would be better suited than the simple "stable" mode currently implemented in Star Citizen 3.10.
 Only in some very specific situations the basic "max thrust" mode might provide better results, but that might be mitigated by the fact that in these same situations "anti-drift stable" mode might allow for longer afterburner durations. So I would suggest that CIG updates their coupled mode to something similar to this "anti-drift stable" mode. Then they could still add a toggle to switch between "anti-drift stable" and "max thrust" coupled mode, but I don't think that would be necessary.
 
+## Math
+
+This following image explains the math used for computing the optimal thrust direction in the "anti-drift stable" mode. It's a top down view on a 3D vector space.
+
+![math.png](Images/math.png)
+
+T: represents the thrust potential of the ship. Here a ship aligned BoundingBox is used (independent thrust axis). If not mistaken, as of 3.10 Star Citizen still uses this type. But this algorithm will work for any possible shape. The important part is that the maximum thrust in a given direction can be computed.
+
+ts: thrust direction for stable accleration (vd-vc)
+tr: thrust direction that will eliminate drift more effectively
+
+v0: stand still
+vc: current velocity vector
+vd: desired velocity vector
+
+vn: velocity vector that has same speed along desired velocity as the current velocity vector but no drift
+
+ldn: length(vd-vn)
+lnc: length(vn-vc)
+tp: maximum thrust possible in the direction of the desired velocity vector (vd)
+to: maximum thrust possible in the direction (vn-vc)
+
+When ldn/lnc > tp/to then use tr which is (vn-vc) + (vd-vn)/ldn * lnc * tp/to, otherwise use ts.
+
 ## Source Code
-The FlightComputer class is the most interesting class which takes a SpaceShip instance (containing information about the ship's capabilities, state, pilot's intentions) and computes the thrust values to apply. As described above the different modes can be achieved by setting the FlighComputer's properties.
+The FlightComputer class is the most interesting class which takes a SpaceShip instance (containing information about the ship's capabilities, state, pilot's intentions) and computes the thrust values to apply. The different modes can be achieved by setting the FlighComputer's Mode property.
 To generate the data how the velocity vector changes and results in a flight path, you can use the PerformManeuver method located in the Tests class.
