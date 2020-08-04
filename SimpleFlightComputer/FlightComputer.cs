@@ -24,8 +24,8 @@ namespace SimpleFlightComputer
         /// <summary>
         /// An option to clamp the anti drift ratio.
         /// The anti drift ratio is acceleration along desired flight direction vs acceleration to counter drift
-        /// and is determined by the ship's capabilities to acceleration in these directions.
-        /// Ssetting this to 1 would mean that the change of thrust direction, when drift has been eliminated, will not be larger than 45 degrees.
+        /// and is determined by the ship's capabilities to accelerate in these directions.
+        /// Setting this to 1 would mean that the change of thrust direction, when drift has been eliminated, will not be larger than 45 degrees.
         /// </summary>
         public double ClampAntiDriftRatio = 0;
 
@@ -80,7 +80,7 @@ namespace SimpleFlightComputer
                     thrust.Z = maxThrust.Z;
                 }
             }
-            // if anti drift only works when the pilot specifies a desired flight direction
+            // anti drift only works when the pilot specifies a desired flight direction
             else if (this.Mode == CoupledMode.AntiDriftStable && ship.DesiredFlightDirection.LengthSq() != 0)
             {
                 // use normalized thrust along desired flight direction (same as the desired flight direction)

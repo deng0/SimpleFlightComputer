@@ -11,16 +11,20 @@
         /// The maximum thrust to the right, upward, forward [N].
         /// </summary>
         public DVector3 MaxThrust;
+
         /// <summary>
         /// The minimum (negative) thrust to the left, downward, backward [N].
         /// </summary>
         public DVector3 MinThrust;
 
+        /// <summary>
+        /// The afterburner factor.
+        /// </summary>
         public double AfterburnerFactor = 2;
 
-        ///// <summary>
-        ///// The current orientation.
-        ///// </summary>
+        /// <summary>
+        /// The current ship orientation in the world.
+        /// </summary>
         public Quaternion Orientation { get; private set; } = Quaternion.Identity;
 
         /// <summary>
@@ -34,7 +38,7 @@
         public double Speed;
 
         /// <summary>
-        /// The world flight direction or 0 if not moving
+        /// The world flight direction or 0 if not moving.
         /// </summary>
         public DVector3 WorldFlightDirection { get; private set; }
 
@@ -60,14 +64,14 @@
         public bool AfterburnerEngaged;
 
         /// <summary>
-        /// Gets the maximum thrust available along the required thrust axis.
-        /// If the power along thrust axis is not indepentent this does not provide meaningful reasults.
+        /// Gets the maximum thrust [N] available along the required thrust axis.
+        /// If the power along thrust axis is not independent this does not provide meaningful results.
         /// </summary>
         /// <param name="xAxis">Whether to go right (1) or left (-1).</param>
         /// <param name="yAxis">Whether to go up (1) or down (-1).</param>
         /// <param name="zAxis">Whether to go forward (1) or backward (-1).</param>
         /// <returns>
-        /// The max available thrust (if thrust axis were independent).
+        /// The max available thrust [N] (if thrust axis were independent).
         /// </returns>
         public DVector3 GetMaxAvailableThrust(int xAxis, int yAxis, int zAxis)
         {
@@ -78,6 +82,12 @@
             return (this.AfterburnerEngaged ? this.AfterburnerFactor : 1) * thrust;
         }
 
+        /// <summary>
+        /// Clamps the thrust [N] to the ship's capabilities.
+        /// </summary>
+        /// <param name="thrust">The thrust.</param>
+        /// <param name="maxedAxis">The maxed axis [0=x, 1=y, z=2]. Or -1 if no thrust axis is maxed.</param>
+        /// <returns>The clamped thrust [N].</returns>
         public DVector3 ClampThrust(DVector3 thrust, out int maxedAxis)
         {
             DVector3 fac = new DVector3(1, 1, 1);
@@ -135,12 +145,20 @@
             return thrust;
         }
 
+        /// <summary>
+        /// Sets the world flight direction. Normalized vector.
+        /// </summary>
+        /// <param name="worldFlightDirection">The world flight direction.</param>
         public void SetWorldFlightDirection(DVector3 worldFlightDirection)
         {
             this.WorldFlightDirection = worldFlightDirection;
             this.UpdateOrientation(this.Orientation);
         }
 
+        /// <summary>
+        /// Updates the ship orientation.
+        /// </summary>
+        /// <param name="orientation">The orientation.</param>
         public void UpdateOrientation(Quaternion orientation)
         {
             this.Orientation = orientation;

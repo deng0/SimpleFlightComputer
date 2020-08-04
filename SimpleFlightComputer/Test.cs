@@ -27,7 +27,7 @@ namespace SimpleFlightComputer
         /// <param name="flightComputer">The flight computer.</param>
         /// <param name="updateThrustInterval">The update thrust interval in seconds.</param>
         /// <param name="states">The states.</param>
-        /// <returns></returns>
+        /// <returns>Wether the maneuver was finished.</returns>
         public static bool PerformManeuver(
             SpaceShip ship,
             FlightComputer flightComputer,
