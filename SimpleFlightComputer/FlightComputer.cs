@@ -2,6 +2,13 @@
 
 namespace SimpleFlightComputer
 {
+    public enum CoupledMode
+    {
+        MaxThrust,
+        Stable,
+        AntiDriftStable
+    }
+
     /// <summary>
     /// This class implements different modes how to determine thrust.
     ///
@@ -12,30 +19,7 @@ namespace SimpleFlightComputer
     /// </summary>
     public class FlightComputer
     {
-        /// <summary>
-        /// The UpdateThrustInterval in s.
-        /// </summary>
-        public double UpdateThrustInterval = 0.01;
-
-        /// <summary>
-        /// When this is disabled, simple "max thrust" mode is used.
-        /// </summary>
-        public bool PrioritizeStability = true;
-
-        /// <summary>
-        /// Use maximum thrust available when spacebrake engaged, which may result in unpredictable flight path.
-        /// </summary>
-        public bool UseMaxThrustWhenSpacebrakeEngaged = false;
-
-        /// <summary>
-        /// Whether to use anti-drift. This has no effect when PrioritizeStability is disabled.
-        /// </summary>
-        public bool UseAntiDrift = true;
-
-        /// <summary>
-        /// Whether to use anti-drift while braking. This has no effect when PrioritizeStability or UseAntiDrift is disabled.
-        /// </summary>
-        public bool UseAntiDriftBraking = true;
+        public CoupledMode Mode = CoupledMode.AntiDriftStable;
 
         /// <summary>
         /// An option to clamp the anti drift ratio.
@@ -49,16 +33,17 @@ namespace SimpleFlightComputer
         /// Computes the thrust to perform at this moment.
         /// </summary>
         /// <param name="ship">The ship.</param>
+        /// <param name="updateThrustInterval">The update thrust interval in seconds.</param>
         /// <returns>
-        /// The thrust.
+        /// The thrust to apply to the ship until the updateThrustInterval has passed.
         /// </returns>
-        public DVector3 ComputeThrust(SpaceShip ship)
+        public DVector3 ComputeThrust(SpaceShip ship, double updateThrustInterval)
         {
             // compute desired velocity change
-            DVector3 desiredVelocityChange = ship.DesiredFlightDirection * ship.DesiredSpeed - ship.FlightDirection * ship.Speed;
+            DVector3 desiredVelocityChange = ship.DesiredSpeed * ship.DesiredFlightDirection - ship.Speed * ship.FlightDirection;
 
             // determine thrust needed to get to the desired velocity within one UpdateThrustInterval
-            DVector3 thrustToDesired = desiredVelocityChange * ship.Mass / this.UpdateThrustInterval;
+            DVector3 thrustToDesired = desiredVelocityChange * ship.Mass / updateThrustInterval;
 
             // clamp thrustToDesired with ship's capabilities
             DVector3 clampedThrustToDesired = ship.ClampThrust(thrustToDesired, out int maxedAxis);
@@ -73,7 +58,7 @@ namespace SimpleFlightComputer
             }
 
             // check if "max thrust" mode should be used
-            if (!this.PrioritizeStability || this.UseMaxThrustWhenSpacebrakeEngaged && ship.SpacebrakeEngaged)
+            if (this.Mode == CoupledMode.MaxThrust)
             {
                 // determine the max available thrust along the needed thrust axis
                 DVector3 maxThrust = ship.GetMaxAvailableThrust(
@@ -95,8 +80,8 @@ namespace SimpleFlightComputer
                     thrust.Z = maxThrust.Z;
                 }
             }
-            // if desired speed is 0 and AntiDriftBraking is not enabled use stable thrust
-            else if (this.UseAntiDrift && (ship.DesiredSpeed > 0 || this.UseAntiDriftBraking))
+            // if anti drift only works when the pilot specifies a desired flight direction
+            else if (this.Mode == CoupledMode.AntiDriftStable && ship.DesiredFlightDirection.LengthSq() != 0)
             {
                 // use normalized thrust along desired flight direction (same as the desired flight direction)
                 DVector3 thrustAlongDesiredNormalized = ship.DesiredFlightDirection;

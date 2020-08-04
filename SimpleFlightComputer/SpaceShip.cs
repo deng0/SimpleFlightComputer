@@ -34,14 +34,14 @@
         public double Speed;
 
         /// <summary>
-        /// The world flight direction.
+        /// The world flight direction or 0 if not moving
         /// </summary>
-        public DVector3 WorldFlightDirection { get; private set; } = new DVector3(0, 0, 1);
+        public DVector3 WorldFlightDirection { get; private set; }
 
         /// <summary>
-        /// The flight direction (normalized vector) in ship orientation.
+        /// The flight direction (normalized vector) in ship orientation or 0 if not moving.
         /// </summary>
-        public DVector3 FlightDirection = new DVector3(0, 0, 1);
+        public DVector3 FlightDirection;
 
         /// <summary>
         /// The desired velocity vector [m/s] in ship orientation as specified by the pilot's input.
@@ -50,18 +50,14 @@
 
         /// <summary>
         /// The desired flight direction (normalized vector) in ship orientation as specified by the pilot's input.
+        /// When DesiredSpeed is set to 0 this can still be used to allow brakesteering when AntiDrift is enabled.
         /// </summary>
-        public DVector3 DesiredFlightDirection = new DVector3(0, 0, 1);
+        public DVector3 DesiredFlightDirection;
 
         /// <summary>
         /// Whether the pilot has currently engaged afterburner.
         /// </summary>
         public bool AfterburnerEngaged;
-
-        /// <summary>
-        /// Whether the pilot has currently engaged spacebrake.
-        /// </summary>
-        public bool SpacebrakeEngaged;
 
         /// <summary>
         /// Gets the maximum thrust available along the required thrust axis.
@@ -180,19 +176,18 @@
             this.Speed = velocityVector.Normalize();
 
             // just to make sure spaceship comes to full stop if within small tolerance
-            if (this.Speed < 0.001)
+            if (this.Speed < 0.0001)
             {
                 this.Speed = 0.0;
+                this.FlightDirection = DVector3.Zero;
             }
-
-            // just to make sure flight Direction is not set to an invalid direction
-            if (this.Speed > 0.0)
+            else
             {
                 this.FlightDirection = velocityVector;
-
-                // also update WorldVelocityVector
-                this.WorldFlightDirection = this.Orientation.Transform(this.FlightDirection);
             }
+
+            // also update WorldVelocityVector
+            this.WorldFlightDirection = this.Orientation.Transform(this.FlightDirection);
         }
     }
 }

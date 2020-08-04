@@ -25,11 +25,13 @@ namespace SimpleFlightComputer
         /// </summary>
         /// <param name="ship">The ship.</param>
         /// <param name="flightComputer">The flight computer.</param>
+        /// <param name="updateThrustInterval">The update thrust interval in seconds.</param>
         /// <param name="states">The states.</param>
         /// <returns></returns>
         public static bool PerformManeuver(
             SpaceShip ship,
             FlightComputer flightComputer,
+            double updateThrustInterval,
             out List<(double timestamp, DVector3 velocity, DVector3 position)> states)
         {
             states = new List<(double timestamp, DVector3 velocity, DVector3 position)>();
@@ -45,13 +47,13 @@ namespace SimpleFlightComputer
             while ((ship.DesiredSpeed * ship.DesiredFlightDirection - ship.Speed * ship.FlightDirection).Length() > 0.1)
             {
                 // determine thrust and time remaining to complete maneuver
-                DVector3 thrust = flightComputer.ComputeThrust(ship);
+                DVector3 thrust = flightComputer.ComputeThrust(ship, updateThrustInterval);
 
                 // apply thrust to ship
-                ship.ApplyThrust(thrust, flightComputer.UpdateThrustInterval);
+                ship.ApplyThrust(thrust, updateThrustInterval);
 
                 // update timestamp
-                timestamp += flightComputer.UpdateThrustInterval;
+                timestamp += updateThrustInterval;
 
                 // add updated velocity and position to lists
                 states.Add((timestamp, ship.Speed * ship.WorldFlightDirection, ship.WorldPosition));
